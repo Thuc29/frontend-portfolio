@@ -1,26 +1,108 @@
+@import url("https://fonts.googleapis.com/css2?family=Antonio:wght@100..700&display=swap");
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-sans: "ProximaNova", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Antonio", ui-sans-serif, system-ui, sans-serif;
+  --color-navy-primary: #1A1265;
+  --color-beige-primary: #EBEBDF;
+  --color-navy-dark: #0F0A4A;
+  --color-navy-light: #362B8E;
+  --color-beige-light: #F8F8F0;
+  --color-beige-dark: #D7D7C7;
+  --color-purple-light: #DDA0DD;
+  --color-olive-yellow: #BDB76B;
+  --color-blue-analog: #4A90E2;
+  --color-gray-light: #F5F5F5;
+  --color-gray-dark: #333333;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-beige-primary);
+    color: var(--color-navy-primary);
+    text-rendering: geometricPrecision;
+    overflow-x: hidden;
+    cursor: none;
+    /* Hide default cursor for custom cursor */
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-beige-dark);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, var(--color-blue-analog), var(--color-purple-light));
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, var(--color-navy-primary), var(--color-blue-analog));
+  }
+
+  /* Smooth scrolling for GSAP */
+  #smooth-wrapper {
+    overflow: hidden;
+  }
+
+  #smooth-content {
+    overflow: visible;
+    width: 100%;
+  }
+
+  /* Section dividers */
+  .section-divider {
+    position: relative;
+  }
+
+  .section-divider::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-navy-primary), transparent);
+    opacity: 0.3;
+  }
+
+  /* Surface effect for cards */
+  .surface {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Disable cursor on mobile */
+  @media (max-width: 768px) {
+    body {
+      cursor: auto;
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+@font-face {
+  font-family: "ProximaNova";
+  src: url("/fonts/ProximaNova-Regular.otf");
 }
