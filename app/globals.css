@@ -85,10 +85,64 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
+  /* Enhanced cursor hover states */
+  .cursor-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .cursor-hover:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Cursor trail animation */
+  .cursor-trail {
+    animation: cursorTrail 0.6s ease-out forwards;
+  }
+
+  @keyframes cursorTrail {
+    0% {
+      opacity: 0.8;
+      transform: scale(1);
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+  }
+
   /* Disable cursor on mobile */
   @media (max-width: 768px) {
     body {
       cursor: auto;
+    }
+
+    /* Hide custom cursor elements on mobile */
+    .custom-cursor {
+      display: none !important;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .cursor-dot {
+      background: var(--color-navy-primary);
+      border: 2px solid var(--color-beige-primary);
+    }
+
+    .cursor-follower {
+      border-color: var(--color-navy-primary);
+      border-width: 2px;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+
+    .cursor-dot,
+    .cursor-follower {
+      transition: none !important;
+      animation: none !important;
     }
   }
 

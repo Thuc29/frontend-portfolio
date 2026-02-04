@@ -59,7 +59,7 @@ export default function PageLoader() {
      return (
           <div
                ref={loaderRef}
-               className="fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-beige-primary"
+               className="fixed inset-0 z-10000 flex flex-col items-center justify-center bg-beige-primary"
           >
                {/* Logo/Text */}
                <div ref={textRef} className="mb-8 text-center">

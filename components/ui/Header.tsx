@@ -3,8 +3,11 @@
 import { useRef, useState } from "react"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
+import { ScrollToPlugin } from "gsap/all"
 import MagneticButton from "./MagneticButton"
 import { Contact, DownloadIcon } from "lucide-react"
+
+gsap.registerPlugin(ScrollToPlugin)
 
 const navItems = [
   { id: "hero", label: "Home", },
@@ -22,6 +25,42 @@ export default function Header() {
   const lastYRef = useRef(0)
   const tickingRef = useRef(false)
   const headerRef = useRef<HTMLElement>(null)
+
+  // Define color schemes for different sections
+  const getColorScheme = (section: string) => {
+    switch (section) {
+      case "hero":
+        return {
+          navText: "text-beige-light",
+          navTextActive: "text-beige-light font-bold",
+          navTextHover: "hover:text-beige-light",
+          navTextInactive: "text-beige-primary",
+          downloadBtn: "border-beige-light/40 bg-beige-light/10 text-beige-light hover:border-beige-light/60 hover:bg-beige-light/20",
+          contactBtn: "bg-blue-analog text-beige-light hover:bg-blue-analog/80",
+          menuIcon: "bg-beige-light",
+          mobileMenuBg: "bg-navy-dark/90 border-beige-light/20",
+          mobileMenuText: "text-beige-primary hover:text-beige-light",
+          mobileMenuTextActive: "bg-beige-light/15 text-beige-light font-bold",
+          mobileMenuHover: "hover:bg-beige-light/10"
+        }
+      default: // for about, skills, projects, experience, contact sections with light backgrounds
+        return {
+          navText: "text-navy-dark",
+          navTextActive: "text-navy-dark font-bold",
+          navTextHover: "hover:text-navy-dark",
+          navTextInactive: "text-navy-primary",
+          downloadBtn: "border-navy-dark/40 bg-navy-dark/10 text-navy-dark hover:border-navy-dark/60 hover:bg-navy-dark/20",
+          contactBtn: "bg-navy-dark text-beige-light hover:bg-navy-primary",
+          menuIcon: "bg-navy-dark",
+          mobileMenuBg: "bg-beige-primary/95 border-navy-primary/20",
+          mobileMenuText: "text-navy-primary hover:text-navy-dark",
+          mobileMenuTextActive: "bg-navy-dark/15 text-navy-dark font-bold",
+          mobileMenuHover: "hover:bg-navy-dark/10"
+        }
+    }
+  }
+
+  const colorScheme = getColorScheme(activeSection)
 
   useGSAP(() => {
     lastYRef.current = window.scrollY
@@ -78,7 +117,12 @@ export default function Header() {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id)
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
+      // Use GSAP scrollTo for smooth scrolling with ScrollSmoother
+      gsap.to(window, {
+        duration: 1.5,
+        scrollTo: { y: element, offsetY: 0 },
+        ease: "power2.inOut"
+      })
       setIsMenuOpen(false)
     }
   }
@@ -124,9 +168,9 @@ export default function Header() {
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className={`cursor-hover relative px-4 py-2 text-sm font-semibold transition-all duration-300 hover:text-navy-primary ${activeSection === item.id
-                    ? "text-navy-primary"
-                    : "text-navy-light hover:text-navy-primary"
+                  className={`cursor-pointer relative px-4 py-2 text-sm font-semibold transition-all duration-300 ${colorScheme.navTextHover} ${activeSection === item.id
+                    ? colorScheme.navTextActive
+                    : `${colorScheme.navTextInactive} ${colorScheme.navTextHover}`
                     }`}
                 >
                   {item.label}
@@ -141,7 +185,7 @@ export default function Header() {
           {/* Right side container - CTA buttons and menu icon */}
           <div className="flex items-center gap-3">
             <MagneticButton
-              className="cursor-hover items-center flex rounded-full border border-navy-primary/20 bg-beige-primary px-4 py-2 text-sm font-semibold text-navy-primary transition-all duration-300 hover:border-navy-primary/35 hover:bg-navy-primary/5 hover:scale-105"
+              className={`cursor-hover items-center flex rounded-full ${colorScheme.downloadBtn} px-4 py-2 text-sm font-bold transition-all duration-300 hover:scale-105 shadow-sm backdrop-blur-sm`}
               strength={0.2}
               onClick={() => {
                 const link = document.createElement("a")
@@ -156,7 +200,7 @@ export default function Header() {
               Download CV
             </MagneticButton>
             <MagneticButton
-              className="cursor-hover flex rounded-full bg-navy-primary px-4 py-2 text-sm font-medium text-beige-light transition-all duration-300 hover:bg-navy-dark hover:scale-105"
+              className={`cursor-hover flex rounded-full ${colorScheme.contactBtn} px-4 py-2 text-sm font-bold transition-all duration-300 hover:scale-105 shadow-md`}
               strength={0.2}
               onClick={() => scrollToSection("contact")}
             >
@@ -168,38 +212,38 @@ export default function Header() {
 
             {/* Menu Icon - Desktop */}
             <button
-              className="cursor-hover hidden md:flex h-8 w-8 flex-col items-center justify-center gap-1"
+              className="cursor-pointer hidden md:flex h-8 w-8 flex-col items-center justify-center gap-1"
               onClick={toggleMenu}
             >
               <span
-                className={`h-0.5 w-5 bg-navy-primary transition-all duration-300 ${isMenuOpen ? "translate-y-1.5 rotate-45" : ""
+                className={`h-0.5 w-5 ${colorScheme.menuIcon} transition-all duration-300 ${isMenuOpen ? "translate-y-1.5 rotate-45" : ""
                   }`}
               />
               <span
-                className={`h-0.5 w-5 bg-navy-primary transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""
+                className={`h-0.5 w-5 ${colorScheme.menuIcon} transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""
                   }`}
               />
               <span
-                className={`h-0.5 w-5 bg-navy-primary transition-all duration-300 ${isMenuOpen ? "-translate-y-1.5 -rotate-45" : ""
+                className={`h-0.5 w-5 ${colorScheme.menuIcon} transition-all duration-300 ${isMenuOpen ? "-translate-y-1.5 -rotate-45" : ""
                   }`}
               />
             </button>
 
             {/* Menu Icon - Mobile */}
             <button
-              className="cursor-hover flex h-8 w-8 flex-col items-center justify-center gap-1 md:hidden"
+              className="cursor-pointer flex h-8 w-8 flex-col items-center justify-center gap-1 md:hidden"
               onClick={toggleMenu}
             >
               <span
-                className={`h-0.5 w-5 bg-navy-primary transition-all duration-300 ${isMenuOpen ? "translate-y-1.5 rotate-45" : ""
+                className={`h-0.5 w-5 ${colorScheme.menuIcon} transition-all duration-300 ${isMenuOpen ? "translate-y-1.5 rotate-45" : ""
                   }`}
               />
               <span
-                className={`h-0.5 w-5 bg-navy-primary transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""
+                className={`h-0.5 w-5 ${colorScheme.menuIcon} transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""
                   }`}
               />
               <span
-                className={`h-0.5 w-5 bg-navy-primary transition-all duration-300 ${isMenuOpen ? "-translate-y-1.5 -rotate-45" : ""
+                className={`h-0.5 w-5 ${colorScheme.menuIcon} transition-all duration-300 ${isMenuOpen ? "-translate-y-1.5 -rotate-45" : ""
                   }`}
               />
             </button>
@@ -210,16 +254,16 @@ export default function Header() {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div
-            className="menu-dropdown mt-2 rounded-2xl border border-navy-primary/10 bg-beige-primary/95 p-4 backdrop-blur-md md:hidden"
+            className={`menu-dropdown mt-2 rounded-2xl ${colorScheme.mobileMenuBg} p-4 backdrop-blur-md md:hidden`}
           >
             <nav className="flex flex-col gap-2">
               {navItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className={`cursor-hover rounded-lg px-4 py-3 text-left text-sm font-semibold transition-all duration-300 hover:bg-navy-primary/5 ${activeSection === item.id
-                    ? "bg-navy-primary/10 text-navy-primary"
-                    : "text-navy-light"
+                  className={`cursor-pointer rounded-lg px-4 py-3 text-left text-sm font-semibold transition-all duration-300 ${colorScheme.mobileMenuHover} ${activeSection === item.id
+                    ? colorScheme.mobileMenuTextActive
+                    : colorScheme.mobileMenuText
                     }`}
                 >
                   {item.label}

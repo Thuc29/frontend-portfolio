@@ -31,7 +31,7 @@ export default function ScrollProgress() {
           <div className="fixed left-0 top-0 z-50 h-1 w-full bg-navy-primary/10">
                <div
                     ref={progressRef}
-                    className="h-full w-full origin-left scale-x-0 bg-linear-to-r from-blue-analog via-purple-light to-olive-yellow"
+                    className="h-full w-full origin-left scale-x-0 bg-linear-to-r from-blue-analog via-purple-light to-navy-light"
                />
           </div>
      )

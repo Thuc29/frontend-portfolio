@@ -4,6 +4,7 @@ import { useRef } from "react"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import Image from "next/image"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -197,66 +198,20 @@ export default function About() {
               design skills.
             </p>
           </div>
-
-          {/* Quick stats */}
-          <div ref={statsRef} className="mt-8 flex flex-wrap gap-8">
-            <div className="group cursor-default transition-transform duration-300 hover:scale-110">
-              <p className="text-3xl font-semibold text-navy-primary transition-colors group-hover:text-blue-analog">
-                2+
-              </p>
-              <p className="text-sm text-navy-light">Years Experience</p>
-            </div>
-            <div className="group cursor-default transition-transform duration-300 hover:scale-110">
-              <p className="text-3xl font-semibold text-navy-primary transition-colors group-hover:text-blue-analog">
-                10+
-              </p>
-              <p className="text-sm text-navy-light">Projects Completed</p>
-            </div>
-            <div className="group cursor-default transition-transform duration-300 hover:scale-110">
-              <p className="text-3xl font-semibold text-navy-primary transition-colors group-hover:text-blue-analog">
-                5+
-              </p>
-              <p className="text-sm text-navy-light">Happy Clients</p>
-            </div>
-          </div>
-
-          {/* Skills preview */}
-          <div className="mt-8 flex flex-wrap gap-3">
-            {["React", "Next.js", "TypeScript", "GSAP", "Tailwind"].map((skill) => (
-              <span
-                key={skill}
-                className="cursor-hover rounded-full border border-navy-primary/15 bg-beige-light px-4 py-2 text-sm font-medium text-navy-light transition-all duration-300 hover:border-navy-primary/30 hover:bg-navy-primary hover:text-beige-light hover:scale-105"
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
         </div>
-
         {/* Image/Visual */}
         <div ref={imageRef} className="flex-1">
           <div className="relative">
-            {/* Placeholder for profile image */}
+            {/* Profile image */}
             <div className="surface aspect-square overflow-hidden rounded-3xl transition-all duration-500 hover:shadow-[0_30px_80px_rgba(26,18,101,0.1)]">
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-navy-primary/5 to-blue-analog/10">
-                <div className="text-center">
-                  <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-navy-primary/10 transition-transform duration-500 hover:scale-110">
-                    <svg
-                      className="h-12 w-12 text-navy-light"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-sm text-navy-light">Your Photo Here</p>
-                </div>
+              <div className="relative h-full w-full">
+                <Image
+                  src="/images/PTT_8264.jpg"
+                  alt="Profile photo"
+                  fill
+                  className="object-cover transition-transform duration-500 hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
               </div>
             </div>
 
@@ -272,6 +227,6 @@ export default function About() {
           </div>
         </div>
       </div>
-    </section>
+    </section >
   )
 }
