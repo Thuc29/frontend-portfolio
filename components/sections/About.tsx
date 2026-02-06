@@ -223,16 +223,16 @@ export default function About() {
                 ref={labelRef}
                 className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-blue-analog"
               >
-                About Me
+                individual
               </p>
               <h2
                 ref={titleRef}
                 className="mb-6 text-4xl font-bold text-navy-primary md:text-5xl lg:text-6xl"
               >
-                Crafting Digital
+                Frontend Developer
                 <br />
-                <span className="bg-gradient-to-r from-blue-analog to-purple-light bg-clip-text text-transparent">
-                  Experiences
+                <span className="bg-linear-to-r from-blue-analog to-purple-light bg-clip-text text-transparent">
+                  Intern
                 </span>
               </h2>
             </div>
@@ -243,21 +243,16 @@ export default function About() {
               className="space-y-4 text-base leading-relaxed text-gray-dark/80 md:text-lg"
             >
               <p>
-                I&apos;m a Frontend Developer with a strong focus on building
-                performant, accessible, and visually appealing web applications.
-                With experience in modern frameworks and a keen eye for design, I
-                bridge the gap between design and development.
+                I&apos;m ahighly motivated Frontend Developer and a recent Software Engineering graduate.
+                While I am at the start of my professional journey, I have dedicated myself to mastering modern web technologies like React,
+                Tailwind CSS, and TypeScript through intensive personal projects.
               </p>
               <p>
-                My approach combines clean code architecture with thoughtful UI/UX
-                decisions. I believe great products come from attention to detail
-                and understanding user needs.
+                My approach is centered on creating seamless user experiences with a keen eye for design details.
+                I don&apos;t just write code; I strive to understand the &apos;why&apos; behind every pixel and every function.
+                I am eager to bring my fresh perspective and strong work ethic to a collaborative team where I can contribute to impactful digital products.
               </p>
-              <p>
-                When I&apos;m not coding, you&apos;ll find me exploring new
-                technologies, contributing to open-source projects, or refining my
-                design skills.
-              </p>
+
             </div>
 
 

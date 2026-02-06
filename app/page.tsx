@@ -12,7 +12,6 @@ import SideTimeline from "@/components/ui/SideTimeline"
 import CustomCursor from "@/components/ui/CustomCursor"
 import PageLoader from "@/components/ui/PageLoader"
 import ScrollProgress from "@/components/ui/ScrollProgress"
-import Footer from "@/components/ui/Footer"
 import { useGSAP } from "@gsap/react"
 import { ScrollSmoother } from "gsap/all"
 import gsap from "gsap"
@@ -84,10 +83,8 @@ export default function Home() {
             <Projects />
             <Experience />
             <Contact />
-            <Footer />
           </div>
         </div>
-
       </main>
     </>
   )
