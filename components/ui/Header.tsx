@@ -6,6 +6,7 @@ import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/all"
 import MagneticButton from "./MagneticButton"
 import { Contact, DownloadIcon } from "lucide-react"
+import useScrollDirection from "@/hooks/useScrollDirection"
 
 gsap.registerPlugin(ScrollToPlugin)
 
@@ -19,12 +20,13 @@ const navItems = [
 ]
 
 export default function Header() {
-  const [hidden, setHidden] = useState(false)
   const [activeSection, setActiveSection] = useState("hero")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const lastYRef = useRef(0)
-  const tickingRef = useRef(false)
   const headerRef = useRef<HTMLElement>(null)
+  const { scrollDirection, isAtTop } = useScrollDirection()
+
+  // Header is hidden when scrolling down and not at top
+  const isHidden = scrollDirection === "down" && !isAtTop
 
   // Define color schemes for different sections
   const getColorScheme = (section: string) => {
@@ -62,9 +64,26 @@ export default function Header() {
 
   const colorScheme = getColorScheme(activeSection)
 
+  // Animate header hide/show with GSAP
   useGSAP(() => {
-    lastYRef.current = window.scrollY
+    if (!headerRef.current) return
 
+    if (isHidden) {
+      gsap.to(headerRef.current, {
+        y: -120,
+        duration: 0.4,
+        ease: "power2.inOut"
+      })
+    } else {
+      gsap.to(headerRef.current, {
+        y: 0,
+        duration: 0.4,
+        ease: "power2.inOut"
+      })
+    }
+  }, [isHidden])
+
+  useGSAP(() => {
     // Header entrance animation
     gsap.fromTo(
       headerRef.current,
@@ -72,46 +91,33 @@ export default function Header() {
       { y: 0, opacity: 1, duration: 1, ease: "power3.out", delay: 0.5 }
     )
 
+    // Update active section based on scroll
     const onScroll = () => {
-      if (tickingRef.current) return
-      tickingRef.current = true
+      const sections = document.querySelectorAll("section[id]")
+      const scrollPos = window.scrollY + window.innerHeight / 2
 
-      window.requestAnimationFrame(() => {
-        const y = window.scrollY
-        const delta = y - lastYRef.current
+      sections.forEach((section) => {
+        const element = section as HTMLElement
+        const top = element.offsetTop
+        const bottom = top + element.offsetHeight
 
-        // Always show at the very top
-        if (y < 50) {
-          setHidden(false)
-        } else if (delta > 5) {
-          // Scrolling down - hide header
-          setHidden(true)
-        } else if (delta < -5) {
-          // Scrolling up - show header
-          setHidden(false)
+        if (scrollPos >= top && scrollPos <= bottom) {
+          setActiveSection(element.id)
         }
-
-        // Update active section
-        const sections = document.querySelectorAll("section[id]")
-        const scrollPos = y + window.innerHeight / 2
-
-        sections.forEach((section) => {
-          const element = section as HTMLElement
-          const top = element.offsetTop
-          const bottom = top + element.offsetHeight
-
-          if (scrollPos >= top && scrollPos <= bottom) {
-            setActiveSection(element.id)
-          }
-        })
-
-        lastYRef.current = y
-        tickingRef.current = false
       })
     }
 
     window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
+
+    // Also listen to ScrollSmoother updates if available
+    const checkScrollSmoother = setInterval(() => {
+      onScroll()
+    }, 100)
+
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      clearInterval(checkScrollSmoother)
+    }
   }, [])
 
   const scrollToSection = (id: string) => {
@@ -153,11 +159,7 @@ export default function Header() {
   return (
     <header
       ref={headerRef}
-      className={[
-        "fixed inset-x-0 top-0 z-50",
-        "transition-transform duration-300 ease-out",
-        hidden ? "-translate-y-full" : "translate-y-0",
-      ].join(" ")}
+      className="fixed inset-x-0 top-0 z-50"
     >
       <div className="ml-auto max-w-7xl w-fit px-6 py-4">
         <div className="flex items-center justify-end rounded-4xl bg-transparent px-6 py-3 backdrop-blur-md">

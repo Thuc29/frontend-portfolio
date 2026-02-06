@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
@@ -11,56 +11,86 @@ const projects = [
   {
     id: 1,
     title: "E-Commerce Dashboard",
-    description:
-      "A comprehensive admin dashboard with real-time analytics, inventory management, and order tracking.",
-    tags: ["Next.js", "TypeScript", "Tailwind", "Chart.js"],
+    description: "Real-time analytics & inventory management",
+    tags: ["Next.js", "TypeScript", "Tailwind"],
     category: "Web App",
+    year: "2024",
     link: "#",
     github: "#",
-    accent: "from-blue-analog/20 to-purple-light/10",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop",
+    color: "#6366F1",
   },
   {
     id: 2,
     title: "Portfolio Landing Page",
-    description:
-      "Modern landing page with smooth scroll animations, parallax effects, and responsive design.",
-    tags: ["React", "GSAP", "Framer Motion", "CSS"],
+    description: "Smooth animations & parallax effects",
+    tags: ["React", "GSAP", "Framer Motion"],
     category: "Landing Page",
+    year: "2024",
     link: "#",
     github: "#",
-    accent: "from-purple-light/20 to-blue-analog/10",
+    image: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&h=600&fit=crop",
+    color: "#A855F7",
   },
   {
     id: 3,
     title: "Task Management App",
-    description:
-      "Drag-and-drop task board with real-time sync, team collaboration, and deadline tracking.",
-    tags: ["Next.js", "Prisma", "PostgreSQL", "DnD Kit"],
+    description: "Drag-and-drop with real-time sync",
+    tags: ["Next.js", "Prisma", "PostgreSQL"],
     category: "Web App",
+    year: "2023",
     link: "#",
     github: "#",
-    accent: "from-olive-yellow/20 to-purple-light/10",
+    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop",
+    color: "#EAB308",
   },
   {
     id: 4,
     title: "Weather Forecast App",
-    description:
-      "Beautiful weather app with location-based forecasts, interactive maps, and hourly predictions.",
-    tags: ["React", "OpenWeather API", "Mapbox", "PWA"],
+    description: "Location-based forecasts & interactive maps",
+    tags: ["React", "OpenWeather API", "Mapbox"],
     category: "Case Study",
+    year: "2023",
     link: "#",
     github: "#",
-    accent: "from-navy-primary/10 to-blue-analog/15",
+    image: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800&h=600&fit=crop",
+    color: "#1A1265",
+  },
+  {
+    id: 5,
+    title: "Social Media Dashboard",
+    description: "Analytics & content scheduling platform",
+    tags: ["Vue.js", "Node.js", "MongoDB"],
+    category: "Web App",
+    year: "2023",
+    link: "#",
+    github: "#",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
+    color: "#EC4899",
   },
 ]
 
 export default function Projects() {
   const sectionRef = useRef<HTMLElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
-  const cardsRef = useRef<HTMLDivElement>(null)
+  const listRef = useRef<HTMLDivElement>(null)
+  const imageFollowerRef = useRef<HTMLDivElement>(null)
+
+  const [hoveredProject, setHoveredProject] = useState<number | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Detect mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   useGSAP(() => {
-    // Header với clip-path từ giữa mở rộng ra
+    // Header animation
     gsap.fromTo(
       headerRef.current,
       {
@@ -79,165 +109,255 @@ export default function Projects() {
       }
     )
 
-    // Cards với alternating clip-path directions
-    const cards = cardsRef.current?.children
-    if (cards) {
-      Array.from(cards).forEach((card, i) => {
-        const isEven = i % 2 === 0
-        const clipFrom = isEven
-          ? "polygon(0 0, 0 0, 0 100%, 0 100%)" // từ trái
-          : "polygon(100% 0, 100% 0, 100% 100%, 100% 100%)" // từ phải
-
-        gsap.fromTo(
-          card,
-          {
-            clipPath: clipFrom,
-            opacity: 0,
+    // List items stagger animation
+    const items = listRef.current?.querySelectorAll(".project-item")
+    if (items) {
+      gsap.fromTo(
+        items,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: listRef.current,
+            start: "top 80%",
           },
-          {
-            clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-            opacity: 1,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 85%",
-            },
-          }
-        )
+        }
+      )
+    }
 
-        // Animate inner elements
-        const tags = card.querySelectorAll(".project-tag")
-        const links = card.querySelectorAll(".project-link")
+    // Mouse follower setup (desktop only)
+    if (!isMobile && imageFollowerRef.current) {
+      const follower = imageFollowerRef.current
 
-        gsap.fromTo(
-          tags,
-          { opacity: 0, scale: 0.8 },
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.3,
-            stagger: 0.05,
-            ease: "back.out(2)",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 75%",
-            },
-            delay: 0.5,
-          }
-        )
+      // Use quickTo for high performance
+      const xTo = gsap.quickTo(follower, "x", { duration: 0.6, ease: "power3.out" })
+      const yTo = gsap.quickTo(follower, "y", { duration: 0.6, ease: "power3.out" })
 
-        gsap.fromTo(
-          links,
-          { opacity: 0, x: -10 },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.4,
-            stagger: 0.1,
-            scrollTrigger: {
-              trigger: card,
-              start: "top 70%",
-            },
-            delay: 0.6,
-          }
-        )
+      const handleMouseMove = (e: MouseEvent) => {
+        xTo(e.clientX)
+        yTo(e.clientY)
+      }
+
+      window.addEventListener("mousemove", handleMouseMove)
+
+      return () => {
+        window.removeEventListener("mousemove", handleMouseMove)
+      }
+    }
+  }, { scope: sectionRef, dependencies: [isMobile] })
+
+  const handleProjectHover = (projectId: number | null) => {
+    if (isMobile) return
+    setHoveredProject(projectId)
+
+    const follower = imageFollowerRef.current
+    if (!follower) return
+
+    if (projectId !== null) {
+      gsap.to(follower, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.4,
+        ease: "power2.out",
+      })
+    } else {
+      gsap.to(follower, {
+        opacity: 0,
+        scale: 0.8,
+        duration: 0.3,
+        ease: "power2.in",
       })
     }
-  }, { scope: sectionRef })
+  }
 
+  const currentProject = projects.find((p) => p.id === hoveredProject)
+
+  // Mobile: Card view
+  if (isMobile) {
+    return (
+      <section
+        id="projects"
+        ref={sectionRef}
+        className="section-divider relative px-6 py-24"
+      >
+        {/* Header */}
+        <div ref={headerRef} className="mb-16">
+          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-analog">
+            Selected Work
+          </p>
+          <h2 className="mb-6 text-4xl font-bold text-navy-primary">
+            Featured Projects
+          </h2>
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="space-y-6">
+          {projects.map((project) => (
+            <a
+              key={project.id}
+              href={project.link}
+              className="block overflow-hidden rounded-2xl border border-navy-primary/10 bg-beige-light shadow-lg transition-transform duration-300 active:scale-95"
+            >
+              <div
+                className="h-48 bg-cover bg-center"
+                style={{ backgroundImage: `url(${project.image})` }}
+              />
+              <div className="p-6">
+                <div className="mb-2 flex items-center justify-between">
+                  <span
+                    className="rounded-full px-3 py-1 text-xs font-bold uppercase"
+                    style={{
+                      backgroundColor: `${project.color}20`,
+                      color: project.color,
+                    }}
+                  >
+                    {project.category}
+                  </span>
+                  <span className="text-sm text-gray-dark/60">{project.year}</span>
+                </div>
+                <h3 className="mb-2 text-xl font-bold text-navy-primary">
+                  {project.title}
+                </h3>
+                <p className="text-sm text-gray-dark/70">{project.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  // Desktop: List view with cursor follower
   return (
     <section
       id="projects"
       ref={sectionRef}
-      className="section-divider relative mx-auto max-w-6xl px-6 py-24"
+      className="section-divider relative min-h-screen px-6 py-24 md:px-12"
     >
       {/* Header */}
-      <div ref={headerRef} className="mb-16 max-w-2xl">
-        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-blue-analog">
+      <div ref={headerRef} className="mb-20">
+        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-analog">
           Selected Work
         </p>
-        <h2 className="mb-4 text-3xl font-semibold text-navy-primary md:text-4xl">
+        <h2 className="mb-6 text-6xl font-bold text-navy-primary md:text-8xl">
           Featured Projects
         </h2>
-        <p className="text-base leading-relaxed text-gray-dark/80 md:text-lg">
-          A collection of projects showcasing my expertise in frontend
-          development, from interactive dashboards to polished landing pages.
+        <p className="text-lg text-gray-dark/60">
+          Hover to reveal • Click to explore
         </p>
       </div>
 
-      {/* Projects Grid */}
-      <div ref={cardsRef} className="grid gap-8 sm:grid-cols-2">
-        {projects.map((project) => (
-          <article
+      {/* Project List */}
+      <div ref={listRef} className="mx-auto max-w-5xl">
+        {projects.map((project, index) => (
+          <a
             key={project.id}
-            className={`group relative flex flex-col overflow-hidden rounded-3xl border border-navy-primary/10 bg-gradient-to-br ${project.accent} p-6 transition-all duration-500 hover:-translate-y-2 hover:border-navy-primary/20 hover:shadow-[0_30px_80px_rgba(26,18,101,0.12)]`}
+            href={project.link}
+            className="project-item group relative block border-t border-navy-primary/10 py-8 transition-all duration-500 first:border-t-0"
+            onMouseEnter={() => handleProjectHover(project.id)}
+            onMouseLeave={() => handleProjectHover(null)}
+            style={{
+              opacity: hoveredProject === null || hoveredProject === project.id ? 1 : 0.3,
+            }}
           >
-            {/* Category badge */}
-            <span className="mb-4 w-fit rounded-full bg-beige-light/80 px-3 py-1 text-xs font-medium text-navy-light backdrop-blur-sm">
-              {project.category}
-            </span>
+            <div className="flex items-center justify-between gap-8">
+              {/* Left: Number */}
+              <span className="text-2xl font-bold text-navy-primary/20 transition-all duration-500 group-hover:text-navy-primary">
+                0{index + 1}
+              </span>
 
-            {/* Content */}
-            <h3 className="mb-2 text-xl font-semibold text-navy-primary transition-all duration-300 group-hover:text-navy-dark">
-              {project.title}
-            </h3>
-            <p className="mb-6 flex-1 text-sm leading-relaxed text-gray-dark/75">
-              {project.description}
-            </p>
+              {/* Center: Title */}
+              <div className="flex-1">
+                <h3
+                  className="text-4xl font-bold transition-all duration-500 md:text-6xl lg:text-7xl"
+                  style={{
+                    color: hoveredProject === project.id ? project.color : "#1a1265",
+                    transform:
+                      hoveredProject === project.id ? "translateX(20px)" : "translateX(0)",
+                  }}
+                >
+                  {project.title}
+                </h3>
+                <p className="mt-2 text-base text-gray-dark/60 transition-opacity duration-500 group-hover:opacity-100 md:opacity-0">
+                  {project.description}
+                </p>
+              </div>
 
-            {/* Tags */}
-            <div className="mb-6 flex flex-wrap gap-2">
-              {project.tags.map((tag) => (
+              {/* Right: Meta */}
+              <div className="flex flex-col items-end gap-2 text-right">
                 <span
-                  key={tag}
-                  className="project-tag rounded-full border border-navy-primary/15 bg-beige-light/60 px-2.5 py-1 text-xs text-navy-light backdrop-blur-sm transition-all duration-300 hover:border-navy-primary/30 hover:bg-navy-primary hover:text-beige-light"
+                  className="rounded-full px-3 py-1 text-xs font-bold uppercase"
+                  style={{
+                    backgroundColor: `${project.color}20`,
+                    color: project.color,
+                  }}
                 >
-                  {tag}
+                  {project.category}
                 </span>
-              ))}
+                <span className="text-sm text-gray-dark/60">{project.year}</span>
+              </div>
             </div>
 
-            {/* Links */}
-            <div className="flex items-center gap-4 border-t border-navy-primary/10 pt-4">
-              <a
-                href={project.link}
-                className="project-link flex items-center gap-1.5 text-sm font-medium text-navy-primary transition-all duration-300 hover:gap-2.5 hover:text-blue-analog"
+            {/* Hover indicator arrow */}
+            <div
+              className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 transition-all duration-500 group-hover:right-[-40px] group-hover:opacity-100"
+              style={{ color: project.color }}
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                  />
-                </svg>
-                Live Demo
-              </a>
-              <a
-                href={project.github}
-                className="project-link flex items-center gap-1.5 text-sm font-medium text-navy-primary transition-all duration-300 hover:gap-2.5 hover:text-blue-analog"
-              >
-                <svg
-                  className="h-4 w-4"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                </svg>
-                Source
-              </a>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
             </div>
-
-            {/* Decorative corner */}
-            <div className="pointer-events-none absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-navy-primary/5 transition-transform duration-500 group-hover:scale-150" />
-          </article>
+          </a>
         ))}
+      </div>
+
+      {/* Image Follower (Desktop only) */}
+      <div
+        ref={imageFollowerRef}
+        className="pointer-events-none fixed left-0 top-0 z-50 h-[400px] w-[500px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl opacity-0 shadow-2xl"
+        style={{
+          willChange: "transform, opacity",
+        }}
+      >
+        {currentProject && (
+          <>
+            <div
+              className="absolute inset-0 bg-cover bg-center transition-all duration-500"
+              style={{
+                backgroundImage: `url(${currentProject.image})`,
+              }}
+            />
+            {/* Overlay with project info */}
+            <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+              <div className="mb-2 flex flex-wrap gap-2">
+                {currentProject.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full bg-white/20 px-3 py-1 text-xs font-medium backdrop-blur-sm"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <p className="text-sm opacity-90">{currentProject.description}</p>
+            </div>
+          </>
+        )}
       </div>
     </section>
   )

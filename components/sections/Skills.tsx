@@ -1,63 +1,174 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 gsap.registerPlugin(ScrollTrigger)
 
-const skillCategories = [
-  {
-    title: "Frontend",
-    icon: "⚛",
-    color: "from-blue-analog/20 to-purple-light/10",
-    skills: ["React", "Next.js", "TypeScript", "JavaScript", "HTML5", "CSS3"],
-  },
-  {
-    title: "Styling",
-    icon: "🎨",
-    color: "from-purple-light/20 to-blue-analog/10",
-    skills: ["Tailwind CSS", "SCSS/Sass", "Styled Components", "CSS Modules"],
-  },
-  {
-    title: "Animation",
-    icon: "✨",
-    color: "from-olive-yellow/20 to-purple-light/10",
-    skills: ["GSAP", "Framer Motion", "CSS Animations", "Lottie"],
-  },
-  {
-    title: "Tools & Others",
-    icon: "🛠",
-    color: "from-navy-primary/10 to-blue-analog/10",
-    skills: ["Git", "Figma", "REST APIs", "Webpack", "Vite", "npm/yarn"],
-  },
-]
+// Skill data với logo/icon màu
+const skillsData = {
+  frontend: [
+    { name: "React", icon: "⚛️", color: "#61DAFB" },
+    { name: "Next.js", icon: "▲", color: "#000000" },
+    { name: "TypeScript", icon: "TS", color: "#3178C6" },
+    { name: "JavaScript", icon: "JS", color: "#F7DF1E" },
+    { name: "HTML5", icon: "HTML", color: "#E34F26" },
+    { name: "CSS3", icon: "CSS", color: "#1572B6" },
+  ],
+  styling: [
+    { name: "Tailwind CSS", icon: "🎨", color: "#06B6D4" },
+    { name: "SCSS/Sass", icon: "💅", color: "#CC6699" },
+    { name: "Styled Components", icon: "💎", color: "#DB7093" },
+    { name: "CSS Modules", icon: "📦", color: "#000000" },
+    { name: "Framer Motion", icon: "✨", color: "#0055FF" },
+    { name: "GSAP", icon: "🚀", color: "#88CE02" },
+  ],
+  tools: [
+    { name: "Git", icon: "🔧", color: "#F05032" },
+    { name: "Figma", icon: "🎯", color: "#F24E1E" },
+    { name: "REST APIs", icon: "🌐", color: "#009688" },
+    { name: "Webpack", icon: "📦", color: "#8DD6F9" },
+    { name: "Vite", icon: "⚡", color: "#646CFF" },
+    { name: "npm/yarn", icon: "📦", color: "#CB3837" },
+  ],
+}
+
+function MarqueeRow({
+  skills,
+  direction = "left",
+  speed = 50,
+}: {
+  skills: typeof skillsData.frontend
+  direction?: "left" | "right"
+  speed?: number
+}) {
+  const rowRef = useRef<HTMLDivElement>(null)
+  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null)
+  const [isPaused, setIsPaused] = useState(false)
+
+  // Duplicate skills để tạo hiệu ứng vô tận
+  const duplicatedSkills = [...skills, ...skills, ...skills]
+
+  useGSAP(() => {
+    if (!rowRef.current) return
+
+    const row = rowRef.current
+    const totalWidth = row.scrollWidth / 3 // Chia 3 vì duplicate 3 lần
+
+    const tl = gsap.timeline({
+      repeat: -1,
+      paused: isPaused,
+    })
+
+    if (direction === "left") {
+      tl.to(row, {
+        x: -totalWidth,
+        duration: speed,
+        ease: "none",
+      })
+    } else {
+      tl.fromTo(
+        row,
+        { x: -totalWidth },
+        {
+          x: 0,
+          duration: speed,
+          ease: "none",
+        }
+      )
+    }
+
+    return () => {
+      tl.kill()
+    }
+  }, [direction, speed, isPaused])
+
+  return (
+    <div className="relative overflow-hidden py-8">
+      <div
+        ref={rowRef}
+        className="flex gap-8 whitespace-nowrap"
+        style={{ willChange: "transform" }}
+      >
+        {duplicatedSkills.map((skill, index) => {
+          const isHovered = hoveredSkill === `${skill.name}-${index}`
+          const isOtherHovered = hoveredSkill !== null && !isHovered
+
+          return (
+            <div
+              key={`${skill.name}-${index}`}
+              className="group relative inline-flex cursor-pointer items-center gap-4 rounded-2xl border border-navy-primary/10 bg-beige-primary/50 px-8 py-6 backdrop-blur-sm transition-all duration-500"
+              style={{
+                transform: isHovered ? "scale(1.15)" : "scale(1)",
+                opacity: isOtherHovered ? 0.3 : 1,
+                boxShadow: isHovered
+                  ? `0 20px 60px -10px ${skill.color}40, 0 0 0 2px ${skill.color}30`
+                  : "0 4px 20px rgba(0, 0, 0, 0.05)",
+              }}
+              onMouseEnter={() => {
+                setHoveredSkill(`${skill.name}-${index}`)
+                setIsPaused(true)
+              }}
+              onMouseLeave={() => {
+                setHoveredSkill(null)
+                setIsPaused(false)
+              }}
+              onTouchStart={() => {
+                setHoveredSkill(`${skill.name}-${index}`)
+                setIsPaused(true)
+              }}
+              onTouchEnd={() => {
+                setHoveredSkill(null)
+                setIsPaused(false)
+              }}
+            >
+              {/* Icon/Logo */}
+              <span
+                className="text-4xl font-bold transition-all duration-500"
+                style={{
+                  color: isHovered ? skill.color : "#1a1265",
+                  filter: isHovered ? "drop-shadow(0 0 20px currentColor)" : "none",
+                }}
+              >
+                {skill.icon}
+              </span>
+
+              {/* Skill Name */}
+              <span
+                className="text-2xl font-bold transition-all duration-500 md:text-3xl"
+                style={{
+                  color: isHovered ? skill.color : "#1a1265",
+                  textShadow: isHovered ? `0 0 30px ${skill.color}60` : "none",
+                }}
+              >
+                {skill.name}
+              </span>
+
+              {/* Glow Effect */}
+              {isHovered && (
+                <div
+                  className="pointer-events-none absolute inset-0 rounded-2xl opacity-20"
+                  style={{
+                    background: `radial-gradient(circle at center, ${skill.color}, transparent 70%)`,
+                  }}
+                />
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 
 export default function Skills() {
   const sectionRef = useRef<HTMLElement>(null)
-  const revealRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
-  const cardsRef = useRef<HTMLDivElement>(null)
+  const marqueeRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
-    // Clip-path reveal - từ dưới lên trên
-    gsap.fromTo(
-      revealRef.current,
-      {
-        clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)",
-      },
-      {
-        clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-        duration: 1.2,
-        ease: "power4.inOut",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-        },
-      }
-    )
-
     // Header animation
     const headerTl = gsap.timeline({
       scrollTrigger: {
@@ -75,7 +186,7 @@ export default function Skills() {
         headerLabel,
         { opacity: 0, y: -20 },
         { opacity: 1, y: 0, duration: 0.5 },
-        0.4
+        0
       )
     }
 
@@ -84,7 +195,7 @@ export default function Skills() {
         headerTitle,
         { opacity: 0, scale: 0.9 },
         { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.5)" },
-        0.5
+        0.2
       )
     }
 
@@ -93,53 +204,28 @@ export default function Skills() {
         headerDesc,
         { opacity: 0, y: 20 },
         { opacity: 1, y: 0, duration: 0.5 },
-        0.6
+        0.4
       )
     }
 
-    // Cards with clip-path reveal từng card
-    const cards = cardsRef.current?.children
-    if (cards) {
-      Array.from(cards).forEach((card, i) => {
-        gsap.fromTo(
-          card,
-          {
-            clipPath: "inset(100% 0 0 0)",
-            opacity: 0,
+    // Marquee rows fade in
+    const rows = marqueeRef.current?.children
+    if (rows) {
+      gsap.fromTo(
+        rows,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: marqueeRef.current,
+            start: "top 80%",
           },
-          {
-            clipPath: "inset(0% 0 0 0)",
-            opacity: 1,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 85%",
-            },
-            delay: i * 0.1,
-          }
-        )
-
-        // Animate skill tags inside each card
-        const tags = card.querySelectorAll(".skill-tag")
-        gsap.fromTo(
-          tags,
-          { opacity: 0, scale: 0.8, y: 10 },
-          {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            duration: 0.3,
-            stagger: 0.05,
-            ease: "back.out(2)",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 75%",
-            },
-            delay: i * 0.1 + 0.4,
-          }
-        )
-      })
+        }
+      )
     }
   }, { scope: sectionRef })
 
@@ -147,58 +233,36 @@ export default function Skills() {
     <section
       id="skills"
       ref={sectionRef}
-      className="section-divider relative mx-auto max-w-6xl px-6 py-24"
+      className="section-divider relative overflow-hidden py-24"
     >
-      <div ref={revealRef}>
-        {/* Header */}
-        <div ref={headerRef} className="mb-12 text-center">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-blue-analog">
-            Tech Stack
-          </p>
-          <h2 className="mb-4 text-3xl font-semibold text-navy-primary md:text-4xl">
-            Skills & Technologies
-          </h2>
-          <p className="mx-auto max-w-2xl text-base leading-relaxed text-gray-dark/80">
-            Tools and technologies I use to bring ideas to life
-          </p>
-        </div>
-
-        {/* Skills Grid */}
-        <div
-          ref={cardsRef}
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {skillCategories.map((category) => (
-            <div
-              key={category.title}
-              className={`group relative overflow-hidden rounded-2xl border border-navy-primary/10 bg-gradient-to-br ${category.color} p-6 transition-all duration-500 hover:-translate-y-2 hover:border-navy-primary/20 hover:shadow-[0_25px_50px_rgba(26,18,101,0.1)]`}
-            >
-              {/* Icon */}
-              <span className="mb-3 block text-2xl transition-transform duration-300 group-hover:scale-125">
-                {category.icon}
-              </span>
-
-              <h3 className="mb-4 text-lg font-semibold text-navy-primary">
-                {category.title}
-              </h3>
-
-              <div className="flex flex-wrap gap-2">
-                {category.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="skill-tag rounded-full border border-navy-primary/15 bg-beige-primary/80 px-3 py-1.5 text-xs font-medium text-navy-light transition-all duration-300 hover:border-navy-primary/30 hover:bg-navy-primary hover:text-beige-light"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-
-              {/* Hover glow effect */}
-              <div className="pointer-events-none absolute -inset-px rounded-2xl bg-gradient-to-br from-blue-analog/0 via-purple-light/0 to-blue-analog/0 opacity-0 transition-opacity duration-500 group-hover:opacity-20" />
-            </div>
-          ))}
-        </div>
+      {/* Header */}
+      <div ref={headerRef} className="mb-20 px-6 text-center">
+        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-analog">
+          Tech Stack
+        </p>
+        <h2 className="mb-6 text-5xl font-bold text-navy-primary md:text-7xl">
+          Skills & Technologies
+        </h2>
+        <p className="mx-auto max-w-2xl text-lg leading-relaxed text-gray-dark/80">
+          Hover to reveal • Touch to pause
+        </p>
       </div>
+
+      {/* Infinite Marquee Rows */}
+      <div ref={marqueeRef} className="space-y-4">
+        {/* Row 1: Frontend - Left to Right */}
+        <MarqueeRow skills={skillsData.frontend} direction="left" speed={40} />
+
+        {/* Row 2: Styling & Animation - Right to Left */}
+        <MarqueeRow skills={skillsData.styling} direction="right" speed={50} />
+
+        {/* Row 3: Tools - Left to Right */}
+        <MarqueeRow skills={skillsData.tools} direction="left" speed={45} />
+      </div>
+
+      {/* Gradient Overlays for fade effect */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-linear-to-r from-beige-primary to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-linear-to-l from-beige-primary to-transparent" />
     </section>
   )
 }

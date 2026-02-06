@@ -5,8 +5,39 @@ import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import Image from "next/image"
+import { Code2, Palette, Zap, Award } from "lucide-react"
 
 gsap.registerPlugin(ScrollTrigger)
+
+const stats = [
+  { value: "3+", label: "Years Experience" },
+  { value: "50+", label: "Projects Completed" },
+  { value: "20+", label: "Happy Clients" },
+  { value: "100%", label: "Commitment" },
+]
+
+const highlights = [
+  {
+    icon: Code2,
+    title: "Clean Code",
+    description: "Writing maintainable and scalable code",
+  },
+  {
+    icon: Palette,
+    title: "Design Focus",
+    description: "Pixel-perfect implementation",
+  },
+  {
+    icon: Zap,
+    title: "Performance",
+    description: "Optimized for speed and efficiency",
+  },
+  {
+    icon: Award,
+    title: "Best Practices",
+    description: "Following industry standards",
+  },
+]
 
 export default function About() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -15,6 +46,7 @@ export default function About() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const paragraphsRef = useRef<HTMLDivElement>(null)
   const statsRef = useRef<HTMLDivElement>(null)
+  const highlightsRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
   const deco1Ref = useRef<HTMLDivElement>(null)
   const deco2Ref = useRef<HTMLDivElement>(null)
@@ -34,7 +66,7 @@ export default function About() {
       ease: "none",
     })
 
-    // Clip-path reveal for entire section - từ trái sang phải
+    // Clip-path reveal for entire section
     gsap.fromTo(
       revealRef.current,
       {
@@ -115,6 +147,27 @@ export default function About() {
       )
     }
 
+    // Highlights animation
+    const highlightItems = highlightsRef.current?.children
+    if (highlightItems) {
+      gsap.fromTo(
+        highlightItems,
+        { opacity: 0, y: 30, scale: 0.9 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: highlightsRef.current,
+            start: "top 85%",
+          },
+        }
+      )
+    }
+
     // Image with clip-path circle reveal
     gsap.fromTo(
       imageRef.current,
@@ -157,76 +210,117 @@ export default function About() {
     <section
       id="about"
       ref={sectionRef}
-      className="section-divider relative mx-auto max-w-6xl px-6 py-24"
+      className="section-divider relative mx-auto max-w-7xl px-6 py-24 md:py-32"
     >
-      <div
-        ref={revealRef}
-        className="flex flex-col items-center gap-12 md:flex-row md:gap-16"
-      >
-        {/* Content */}
-        <div className="flex-1">
-          <p
-            ref={labelRef}
-            className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-blue-analog"
-          >
-            About Me
-          </p>
-          <h2
-            ref={titleRef}
-            className="mb-6 text-3xl font-semibold text-navy-primary md:text-4xl"
-          >
-            Passionate about crafting digital experiences
-          </h2>
-          <div
-            ref={paragraphsRef}
-            className="space-y-4 text-base leading-relaxed text-gray-dark/80"
-          >
-            <p>
-              I&apos;m a Frontend Developer with a strong focus on building
-              performant, accessible, and visually appealing web applications.
-              With experience in modern frameworks and a keen eye for design, I
-              bridge the gap between design and development.
-            </p>
-            <p>
-              My approach combines clean code architecture with thoughtful UI/UX
-              decisions. I believe great products come from attention to detail
-              and understanding user needs.
-            </p>
-            <p>
-              When I&apos;m not coding, you&apos;ll find me exploring new
-              technologies, contributing to open-source projects, or refining my
-              design skills.
-            </p>
-          </div>
-        </div>
-        {/* Image/Visual */}
-        <div ref={imageRef} className="flex-1">
-          <div className="relative">
-            {/* Profile image */}
-            <div className="surface aspect-square overflow-hidden rounded-3xl transition-all duration-500 hover:shadow-[0_30px_80px_rgba(26,18,101,0.1)]">
-              <div className="relative h-full w-full">
-                <Image
-                  src="/images/PTT_8264.jpg"
-                  alt="Profile photo"
-                  fill
-                  className="object-cover transition-transform duration-500 hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              </div>
+      <div ref={revealRef}>
+        {/* Main Content - Single Row Layout */}
+        <div className="flex flex-col gap-12 lg:flex-row lg:gap-16 lg:items-start">
+          {/* Left Column - Text Content */}
+          <div className="flex-1 space-y-8">
+            {/* Header */}
+            <div>
+              <p
+                ref={labelRef}
+                className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-blue-analog"
+              >
+                About Me
+              </p>
+              <h2
+                ref={titleRef}
+                className="mb-6 text-4xl font-bold text-navy-primary md:text-5xl lg:text-6xl"
+              >
+                Crafting Digital
+                <br />
+                <span className="bg-gradient-to-r from-blue-analog to-purple-light bg-clip-text text-transparent">
+                  Experiences
+                </span>
+              </h2>
             </div>
 
-            {/* Decorative elements */}
+            {/* Paragraphs */}
             <div
-              ref={deco1Ref}
-              className="absolute -right-4 -top-4 h-24 w-24 rounded-2xl border border-purple-light/30 bg-purple-light/10"
-            />
-            <div
-              ref={deco2Ref}
-              className="absolute -bottom-4 -left-4 h-20 w-20 rounded-2xl border border-blue-analog/30 bg-blue-analog/10"
-            />
+              ref={paragraphsRef}
+              className="space-y-4 text-base leading-relaxed text-gray-dark/80 md:text-lg"
+            >
+              <p>
+                I&apos;m a Frontend Developer with a strong focus on building
+                performant, accessible, and visually appealing web applications.
+                With experience in modern frameworks and a keen eye for design, I
+                bridge the gap between design and development.
+              </p>
+              <p>
+                My approach combines clean code architecture with thoughtful UI/UX
+                decisions. I believe great products come from attention to detail
+                and understanding user needs.
+              </p>
+              <p>
+                When I&apos;m not coding, you&apos;ll find me exploring new
+                technologies, contributing to open-source projects, or refining my
+                design skills.
+              </p>
+            </div>
+
+
+          </div>
+
+          {/* Right Column - Image */}
+          <div ref={imageRef} className="relative lg:w-[45%] shrink-0">
+            <div className="relative">
+              {/* Profile image */}
+              <div className="surface group relative aspect-square overflow-hidden rounded-3xl transition-all duration-500 hover:shadow-[0_30px_80px_rgba(26,18,101,0.15)]">
+                <div className="relative h-full w-full">
+                  <Image
+                    src="/images/PTT_8264.jpg"
+                    alt="Profile photo"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, 45vw"
+                    priority
+                  />
+                  {/* Gradient overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                </div>
+              </div>
+
+              {/* Decorative elements */}
+              <div
+                ref={deco1Ref}
+                className="absolute -right-6 -top-6 h-32 w-32 rounded-3xl border-2 border-purple-light/30 bg-gradient-to-br from-purple-light/10 to-blue-analog/10 backdrop-blur-sm"
+              />
+              <div
+                ref={deco2Ref}
+                className="absolute -bottom-6 -left-6 h-24 w-24 rounded-3xl border-2 border-blue-analog/30 bg-gradient-to-br from-blue-analog/10 to-purple-light/10 backdrop-blur-sm"
+              />
+            </div>
           </div>
         </div>
+
+        {/* Highlights Section */}
+        <div
+          ref={highlightsRef}
+          className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {highlights.map((highlight, index) => {
+            const Icon = highlight.icon
+            return (
+              <div
+                key={index}
+                className="group surface rounded-2xl p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+              >
+                <div className="mb-4 inline-flex rounded-xl bg-gradient-to-br from-blue-analog/10 to-purple-light/10 p-3 transition-transform duration-300 group-hover:scale-110">
+                  <Icon className="h-6 w-6 text-blue-analog transition-colors group-hover:text-purple-light" />
+                </div>
+                <h3 className="mb-2 text-lg font-semibold text-navy-primary">
+                  {highlight.title}
+                </h3>
+                <p className="text-sm text-gray-dark/70">
+                  {highlight.description}
+                </p>
+              </div>
+            )
+          })}
+        </div>
       </div>
-    </section >
+    </section>
   )
 }
