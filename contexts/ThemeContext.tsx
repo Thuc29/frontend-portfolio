@@ -12,25 +12,26 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-     const [theme, setTheme] = useState<Theme>("light")
+     // Lazy initialization - chỉ chạy 1 lần khi component mount
+     const [theme, setTheme] = useState<Theme>(() => {
+          if (typeof window === "undefined") return "light"
 
-     useEffect(() => {
-          // Check localStorage and system preference
           const savedTheme = localStorage.getItem("theme") as Theme | null
           const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
                ? "dark"
                : "light"
 
-          const initialTheme = savedTheme || systemTheme
-          setTheme(initialTheme)
-          document.documentElement.classList.toggle("dark", initialTheme === "dark")
-     }, [])
+          return savedTheme || systemTheme
+     })
+
+     // Sync với DOM khi theme thay đổi
+     useEffect(() => {
+          document.documentElement.classList.toggle("dark", theme === "dark")
+          localStorage.setItem("theme", theme)
+     }, [theme])
 
      const toggleTheme = () => {
-          const newTheme = theme === "light" ? "dark" : "light"
-          setTheme(newTheme)
-          localStorage.setItem("theme", newTheme)
-          document.documentElement.classList.toggle("dark", newTheme === "dark")
+          setTheme(prevTheme => prevTheme === "light" ? "dark" : "light")
      }
 
      return (

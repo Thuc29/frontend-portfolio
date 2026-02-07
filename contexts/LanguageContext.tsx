@@ -99,19 +99,21 @@ const translations: Record<Language, Record<string, string>> = {
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-     const [language, setLanguageState] = useState<Language>("en")
+     // Lazy initialization - chỉ chạy 1 lần khi component mount
+     const [language, setLanguageState] = useState<Language>(() => {
+          if (typeof window === "undefined") return "en"
 
-     useEffect(() => {
-          // Check localStorage
           const savedLanguage = localStorage.getItem("language") as Language | null
-          if (savedLanguage) {
-               setLanguageState(savedLanguage)
-          }
-     }, [])
+          return savedLanguage || "en"
+     })
+
+     // Sync với localStorage khi language thay đổi
+     useEffect(() => {
+          localStorage.setItem("language", language)
+     }, [language])
 
      const setLanguage = (lang: Language) => {
           setLanguageState(lang)
-          localStorage.setItem("language", lang)
      }
 
      const t = (key: string): string => {

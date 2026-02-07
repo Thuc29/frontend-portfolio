@@ -188,11 +188,8 @@ export default function Header() {
             </nav>
           )}
 
-          {/* Right side container - Theme, Language, CTA buttons and menu icon */}
+          {/* Right side container - Language, CTA buttons and menu icon */}
           <div className="flex items-center gap-3">
-            {/* Theme Toggle */}
-            <ThemeToggle colorScheme={colorScheme} />
-
             {/* Language Switcher */}
             <LanguageSwitcher colorScheme={colorScheme} />
 
