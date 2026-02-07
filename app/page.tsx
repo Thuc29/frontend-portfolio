@@ -16,10 +16,20 @@ import { useGSAP } from "@gsap/react"
 import { ScrollSmoother } from "gsap/all"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/all"
+import { useEffect } from "react"
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother)
 
 export default function Home() {
+  // Scroll to top on page load/reload
+  useEffect(() => {
+    // Force scroll to top immediately
+    if (typeof window !== 'undefined') {
+      window.history.scrollRestoration = 'manual'
+      window.scrollTo(0, 0)
+    }
+  }, [])
+
   useGSAP(() => {
     // Enhanced ScrollSmoother with better performance
     ScrollSmoother.create({

@@ -4,6 +4,8 @@
 @theme {
   --font-sans: "ProximaNova", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Antonio", ui-sans-serif, system-ui, sans-serif;
+
+  /* Light mode colors (default) */
   --color-navy-primary: #1A1265;
   --color-beige-primary: #EBEBDF;
   --color-navy-dark: #0F0A4A;
@@ -15,6 +17,21 @@
   --color-blue-analog: #4A90E2;
   --color-gray-light: #F5F5F5;
   --color-gray-dark: #333333;
+}
+
+/* Dark mode color overrides */
+.dark {
+  --color-navy-primary: #EBEBDF;
+  --color-beige-primary: #0F0A4A;
+  --color-navy-dark: #F8F8F0;
+  --color-navy-light: #D7D7C7;
+  --color-beige-light: #1A1265;
+  --color-beige-dark: #362B8E;
+  --color-purple-light: #C77DC7;
+  --color-olive-yellow: #D4D17A;
+  --color-blue-analog: #5BA3FF;
+  --color-gray-light: #2A2A2A;
+  --color-gray-dark: #E5E5E5;
 }
 
 @layer base {
@@ -30,6 +47,7 @@
     text-rendering: geometricPrecision;
     overflow-x: hidden;
     cursor: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
     /* Hide default cursor for custom cursor */
   }
 

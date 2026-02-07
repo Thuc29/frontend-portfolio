@@ -24,11 +24,11 @@ export default function SideTimeline() {
 
       const viewportHeight = window.innerHeight
       const scrollY = window.scrollY
-      const centerPoint = scrollY + viewportHeight * 0.5
+      const scrollTop = scrollY + viewportHeight * 0.3 // Use top 30% of viewport as trigger point
 
-      // Find the section that's most visible in viewport
-      let bestSection = sections[0]
-      let bestScore = -1
+      // Find the active section based on scroll position
+      let currentSection = sections[0]
+      let currentProgress = 0
 
       sections.forEach((section) => {
         const element = document.getElementById(section.id)
@@ -37,44 +37,35 @@ export default function SideTimeline() {
         const rect = element.getBoundingClientRect()
         const elementTop = scrollY + rect.top
         const elementBottom = elementTop + rect.height
-        const elementCenter = elementTop + rect.height / 2
 
-        // Calculate how much of the section is visible
-        const visibleTop = Math.max(elementTop, scrollY)
-        const visibleBottom = Math.min(elementBottom, scrollY + viewportHeight)
-        const visibleHeight = Math.max(0, visibleBottom - visibleTop)
-        const visibilityRatio = visibleHeight / rect.height
+        // Check if scroll position is within this section
+        if (scrollTop >= elementTop && scrollTop < elementBottom) {
+          currentSection = section
 
-        // Bonus for being near center of viewport
-        const distanceFromCenter = Math.abs(elementCenter - centerPoint)
-        const centerBonus = Math.max(0, 1 - distanceFromCenter / viewportHeight)
-
-        const score = visibilityRatio * 0.7 + centerBonus * 0.3
-
-        if (score > bestScore) {
-          bestScore = score
-          bestSection = section
+          // Calculate accurate progress within the section
+          const scrollInSection = scrollTop - elementTop
+          currentProgress = Math.min(100, Math.max(0, (scrollInSection / rect.height) * 100))
         }
       })
 
-      // Only update if section actually changed (avoid flickering)
-      if (bestSection.id !== activeSection) {
-        setActiveSection(bestSection.id)
+      // Special case: if we're at the very top, ensure hero is active with 0%
+      if (scrollY < 50) {
+        currentSection = sections[0]
+        currentProgress = 0
       }
 
-      // Calculate progress within the active section
-      const activeElement = document.getElementById(bestSection.id)
-      if (activeElement) {
-        const rect = activeElement.getBoundingClientRect()
-        const elementTop = scrollY + rect.top
-        const elementHeight = rect.height
-
-        // Progress based on how far we've scrolled through this section
-        const relativeScroll = Math.max(0, centerPoint - elementTop)
-        const progress = Math.min(100, Math.max(0, (relativeScroll / elementHeight) * 100))
-
-        setSectionProgress(progress)
+      // Special case: if we're at the very bottom, ensure last section is active with 100%
+      const documentHeight = document.documentElement.scrollHeight
+      if (scrollY + viewportHeight >= documentHeight - 50) {
+        currentSection = sections[sections.length - 1]
+        currentProgress = 100
       }
+
+      // Update state
+      if (currentSection.id !== activeSection) {
+        setActiveSection(currentSection.id)
+      }
+      setSectionProgress(currentProgress)
     }
 
     // Use passive scroll listener with optimized throttling

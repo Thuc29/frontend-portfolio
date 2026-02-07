@@ -99,13 +99,13 @@ function MarqueeRow({
           return (
             <div
               key={`${skill.name}-${index}`}
-              className="group relative inline-flex cursor-pointer items-center gap-4 rounded-2xl border border-navy-primary/10 bg-beige-primary/50 px-8 py-6 backdrop-blur-sm transition-all duration-500"
+              className="group relative inline-flex cursor-pointer items-center gap-4 rounded-2xl border-2 border-navy-primary/30 bg-white/90 dark:bg-navy-dark/90 px-8 py-6 backdrop-blur-md transition-all duration-500 hover:border-navy-primary/50 dark:hover:border-beige-primary/50"
               style={{
                 transform: isHovered ? "scale(1.15)" : "scale(1)",
                 opacity: isOtherHovered ? 0.3 : 1,
                 boxShadow: isHovered
-                  ? `0 20px 60px -10px ${skill.color}40, 0 0 0 2px ${skill.color}30`
-                  : "0 4px 20px rgba(0, 0, 0, 0.05)",
+                  ? `0 20px 60px -10px ${skill.color}40, 0 0 0 3px ${skill.color}50`
+                  : "0 4px 20px rgba(0, 0, 0, 0.08)",
               }}
               onMouseEnter={() => {
                 setHoveredSkill(`${skill.name}-${index}`)
@@ -126,10 +126,10 @@ function MarqueeRow({
             >
               {/* Icon/Logo */}
               <span
-                className="text-4xl font-bold transition-all duration-500"
+                className="text-4xl font-bold transition-all duration-500 text-navy-primary dark:text-beige-primary"
                 style={{
-                  color: isHovered ? skill.color : "#1a1265",
-                  filter: isHovered ? "drop-shadow(0 0 20px currentColor)" : "none",
+                  color: isHovered ? skill.color : undefined,
+                  filter: isHovered ? "drop-shadow(0 0 20px currentColor)" : "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
                 }}
               >
                 {skill.icon}
@@ -137,10 +137,13 @@ function MarqueeRow({
 
               {/* Skill Name */}
               <span
-                className="text-2xl font-bold transition-all duration-500 md:text-3xl"
+                className="text-2xl font-extrabold tracking-tight transition-all duration-500 md:text-3xl text-navy-primary dark:text-beige-primary"
                 style={{
-                  color: isHovered ? skill.color : "#1a1265",
-                  textShadow: isHovered ? `0 0 30px ${skill.color}60` : "none",
+                  color: isHovered ? skill.color : undefined,
+                  textShadow: isHovered
+                    ? `0 0 30px ${skill.color}60, 0 2px 8px rgba(0,0,0,0.2)`
+                    : "0 2px 4px rgba(0,0,0,0.1)",
+                  WebkitTextStroke: isHovered ? "0.5px currentColor" : "0px",
                 }}
               >
                 {skill.name}
@@ -237,13 +240,13 @@ export default function Skills() {
     >
       {/* Header */}
       <div ref={headerRef} className="mb-20 px-6 text-center">
-        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-analog">
+        <p className="mb-3 text-sm font-bold uppercase tracking-[0.3em] text-blue-analog drop-shadow-sm">
           Tech Stack
         </p>
-        <h2 className="mb-6 text-5xl font-bold text-navy-primary md:text-7xl">
+        <h2 className="mb-6 text-5xl font-extrabold tracking-tight dark:text-navy-primary text-beige-primary drop-shadow-md md:text-7xl">
           Skills & Technologies
         </h2>
-        <p className="mx-auto max-w-2xl text-lg leading-relaxed text-gray-dark/80">
+        <p className="mx-auto max-w-2xl text-lg font-semibold leading-relaxed dark:text-gray-dark/80 text-gray-light/80">
           Hover to reveal • Touch to pause
         </p>
       </div>

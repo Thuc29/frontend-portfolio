@@ -138,8 +138,9 @@ export default function Projects() {
       const yTo = gsap.quickTo(follower, "y", { duration: 0.6, ease: "power3.out" })
 
       const handleMouseMove = (e: MouseEvent) => {
+        // Position 10px above cursor
         xTo(e.clientX)
-        yTo(e.clientY)
+        yTo(e.clientY - 10)
       }
 
       window.addEventListener("mousemove", handleMouseMove)
@@ -186,10 +187,10 @@ export default function Projects() {
       >
         {/* Header */}
         <div ref={headerRef} className="mb-16">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-analog">
+          <p className="mb-3 text-sm font-bold uppercase tracking-[0.3em] text-blue-analog drop-shadow-sm">
             Selected Work
           </p>
-          <h2 className="mb-6 text-4xl font-bold text-navy-primary">
+          <h2 className="mb-6 text-4xl font-extrabold tracking-tight text-navy-primary dark:text-beige-primary drop-shadow-md">
             Featured Projects
           </h2>
         </div>
@@ -200,7 +201,7 @@ export default function Projects() {
             <a
               key={project.id}
               href={project.link}
-              className="block overflow-hidden rounded-2xl border border-navy-primary/10 bg-beige-light shadow-lg transition-transform duration-300 active:scale-95"
+              className="block overflow-hidden rounded-2xl border-2 border-navy-primary/20 dark:border-beige-primary/20 bg-beige-light dark:bg-navy-dark shadow-lg transition-transform duration-300 active:scale-95"
             >
               <div
                 className="h-48 bg-cover bg-center"
@@ -217,12 +218,12 @@ export default function Projects() {
                   >
                     {project.category}
                   </span>
-                  <span className="text-sm text-gray-dark/60">{project.year}</span>
+                  <span className="text-sm text-gray-dark/60 dark:text-gray-light/60">{project.year}</span>
                 </div>
-                <h3 className="mb-2 text-xl font-bold text-navy-primary">
+                <h3 className="mb-2 text-xl font-extrabold tracking-tight text-navy-primary dark:text-beige-primary">
                   {project.title}
                 </h3>
-                <p className="text-sm text-gray-dark/70">{project.description}</p>
+                <p className="text-sm font-medium text-gray-dark/80 dark:text-gray-light/80">{project.description}</p>
               </div>
             </a>
           ))}
@@ -240,13 +241,13 @@ export default function Projects() {
     >
       {/* Header */}
       <div ref={headerRef} className="mb-20">
-        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-analog">
+        <p className="mb-3 text-sm font-bold uppercase tracking-[0.3em] text-blue-analog drop-shadow-sm">
           Selected Work
         </p>
-        <h2 className="mb-6 text-6xl font-bold text-navy-primary md:text-8xl">
+        <h2 className="mb-6 text-6xl font-extrabold tracking-tight dark:text-navy-primary text-beige-primary drop-shadow-md md:text-8xl">
           Featured Projects
         </h2>
-        <p className="text-lg text-gray-dark/60">
+        <p className="text-lg font-semibold dark:text-gray-dark/70 text-gray-light/70">
           Hover to reveal • Click to explore
         </p>
       </div>
@@ -266,23 +267,27 @@ export default function Projects() {
           >
             <div className="flex items-center justify-between gap-8">
               {/* Left: Number */}
-              <span className="text-2xl font-bold text-navy-primary/20 transition-all duration-500 group-hover:text-navy-primary">
+              <span className="text-2xl font-bold text-navy-primary/30 dark:text-beige-primary/30 transition-all duration-500 group-hover:text-navy-primary dark:group-hover:text-beige-primary">
                 0{index + 1}
               </span>
 
               {/* Center: Title */}
               <div className="flex-1">
                 <h3
-                  className="text-4xl font-bold transition-all duration-500 md:text-6xl lg:text-7xl"
+                  className="text-4xl font-extrabold tracking-tight transition-all duration-500 md:text-6xl lg:text-7xl dark:text-navy-primary/50 text-beige-primary"
                   style={{
-                    color: hoveredProject === project.id ? project.color : "#1a1265",
+                    color: hoveredProject === project.id ? project.color : undefined,
                     transform:
                       hoveredProject === project.id ? "translateX(20px)" : "translateX(0)",
+                    textShadow: hoveredProject === project.id
+                      ? `0 4px 12px ${project.color}40, 0 2px 4px rgba(0,0,0,0.1)`
+                      : "0 2px 4px rgba(0,0,0,0.05)",
+                    WebkitTextStroke: hoveredProject === project.id ? "0.5px currentColor" : "0px",
                   }}
                 >
                   {project.title}
                 </h3>
-                <p className="mt-2 text-base text-gray-dark/60 transition-opacity duration-500 group-hover:opacity-100 md:opacity-0">
+                <p className="mt-2 text-base font-medium text-gray-dark/80 dark:text-gray-light/80 transition-opacity duration-500 group-hover:opacity-100 md:opacity-0">
                   {project.description}
                 </p>
               </div>
@@ -328,7 +333,7 @@ export default function Projects() {
       {/* Image Follower (Desktop only) */}
       <div
         ref={imageFollowerRef}
-        className="pointer-events-none fixed left-0 top-0 z-50 h-[400px] w-[500px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl opacity-0 shadow-2xl"
+        className="pointer-events-none fixed left-0 top-0 z-50 h-[400px] w-[500px] -translate-x-1/2 -translate-y-full overflow-hidden rounded-2xl opacity-0 shadow-2xl"
         style={{
           willChange: "transform, opacity",
         }}

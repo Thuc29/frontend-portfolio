@@ -7,16 +7,19 @@ import { ScrollToPlugin } from "gsap/all"
 import MagneticButton from "./MagneticButton"
 import { Contact, DownloadIcon } from "lucide-react"
 import useScrollDirection from "@/hooks/useScrollDirection"
+import ThemeToggle from "./ThemeToggle"
+import LanguageSwitcher from "./LanguageSwitcher"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 gsap.registerPlugin(ScrollToPlugin)
 
 const navItems = [
-  { id: "hero", label: "Home", },
-  { id: "about", label: "About" },
-  { id: "skills", label: "Skills" },
-  { id: "projects", label: "Projects" },
-  { id: "experience", label: "Experience" },
-  { id: "contact", label: "Contact" },
+  { id: "hero", key: "nav.home" },
+  { id: "about", key: "nav.about" },
+  { id: "skills", key: "nav.skills" },
+  { id: "projects", key: "nav.projects" },
+  { id: "experience", key: "nav.experience" },
+  { id: "contact", key: "nav.contact" },
 ]
 
 export default function Header() {
@@ -24,6 +27,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
   const { scrollDirection, isAtTop } = useScrollDirection()
+  const { t } = useLanguage()
 
   // Header is hidden when scrolling down and not at top
   const isHidden = scrollDirection === "down" && !isAtTop
@@ -175,7 +179,7 @@ export default function Header() {
                     : `${colorScheme.navTextInactive} ${colorScheme.navTextHover}`
                     }`}
                 >
-                  {item.label}
+                  {t(item.key)}
                   {activeSection === item.id && (
                     <span className="absolute bottom-0 left-1/2 h-0.5 w-6 -translate-x-1/2 rounded-full bg-blue-analog" />
                   )}
@@ -184,8 +188,14 @@ export default function Header() {
             </nav>
           )}
 
-          {/* Right side container - CTA buttons and menu icon */}
+          {/* Right side container - Theme, Language, CTA buttons and menu icon */}
           <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <ThemeToggle colorScheme={colorScheme} />
+
+            {/* Language Switcher */}
+            <LanguageSwitcher colorScheme={colorScheme} />
+
             <MagneticButton
               className={`cursor-hover items-center flex rounded-full ${colorScheme.downloadBtn} px-4 py-2 text-sm font-bold transition-all duration-300 hover:scale-105 shadow-sm backdrop-blur-sm`}
               strength={0.2}
@@ -199,7 +209,7 @@ export default function Header() {
               <DownloadIcon
                 className="mr-2 h-4 w-4"
               />
-              Download CV
+              {t("header.downloadCV")}
             </MagneticButton>
             <MagneticButton
               className={`cursor-hover flex rounded-full ${colorScheme.contactBtn} px-4 py-2 text-sm font-bold transition-all duration-300 hover:scale-105 shadow-md`}
@@ -209,7 +219,7 @@ export default function Header() {
               <Contact
                 className="mr-2 h-4 w-4"
               />
-              Contact
+              {t("header.contact")}
             </MagneticButton>
 
             {/* Menu Icon - Desktop */}
@@ -258,6 +268,12 @@ export default function Header() {
           <div
             className={`menu-dropdown mt-2 rounded-2xl ${colorScheme.mobileMenuBg} p-4 backdrop-blur-md md:hidden`}
           >
+            {/* Mobile Theme & Language Controls */}
+            <div className="mb-4 flex items-center justify-center gap-3 border-b border-current/10 pb-4">
+              <ThemeToggle colorScheme={colorScheme} />
+              <LanguageSwitcher colorScheme={colorScheme} />
+            </div>
+
             <nav className="flex flex-col gap-2">
               {navItems.map((item) => (
                 <button
@@ -268,10 +284,9 @@ export default function Header() {
                     : colorScheme.mobileMenuText
                     }`}
                 >
-                  {item.label}
+                  {t(item.key)}
                 </button>
               ))}
-
             </nav>
           </div>
         )}
